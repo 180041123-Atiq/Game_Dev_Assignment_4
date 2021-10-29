@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
 {
 
     public float MoveSpeed,JumpForce;
-
+    public int score;
+    public bool isGameOver;
     public Rigidbody2D RG2D;
 
     // Start is called before the first frame update
@@ -18,11 +19,15 @@ public class Player : MonoBehaviour
 
         MoveSpeed = 5f;
         JumpForce = 10f;
+        score = 0;
+        isGameOver = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(isGameOver)return ;
+
         if(Input.GetKeyDown(KeyCode.Space)){
             Jump();
         } else if (Input.GetKeyDown(KeyCode.DownArrow)){
@@ -57,4 +62,45 @@ public class Player : MonoBehaviour
         transform.localScale = new Vector2(1f,2f);
     }
 
+    /*private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.tag == "enemy")
+        {
+            // game over
+            Destroy(gameObject);
+        }
+        if (other.gameObject.tag == "collectables")
+        {
+            // score add
+            Destroy(other.gameObject);
+        }
+    }*/
+
+    void OnCollisionEnter2D(Collision2D col){
+
+        if(isGameOver)return ;
+
+        if(col.gameObject.tag == "enemy"){
+            Destroy(gameObject);
+            uDie();
+        } else if (col.gameObject.tag == "coin"){
+            Destroy(col.gameObject);
+            score++;
+        } else if (col.gameObject.tag == "doorway"){
+            uWin();
+        }
+
+    }
+
+    void uWin(){
+        Debug.Log("You win!!!");
+        Debug.Log("Your Score is "+score);
+        isGameOver = true;
+    }
+
+    void uDie(){
+        Debug.Log("You Die...");
+        Debug.Log("Your Score is "+score);
+        isGameOver = true;
+    }
 }
